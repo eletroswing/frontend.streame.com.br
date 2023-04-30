@@ -26,7 +26,7 @@ export default function App() {
       });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: unknow) => {
     e.preventDefault();
     fetchUserData(e.target[0].value);
   };
