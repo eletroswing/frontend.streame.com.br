@@ -1,4 +1,4 @@
-import { useRef, FormEvent, useEffect } from "react";
+import { useRef, FormEvent, useEffect, useState } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 
 import logo from "./assets/logo.png";
@@ -7,6 +7,8 @@ import iptv from "./assets/iptv.jpg";
 export default function App() {
   const headerAnimation = useAnimationControls();
   const emailRef = useRef<HTMLInputElement>(null)
+  const [showMessage, setShowMessage] = useState({message: "", code: ""})
+  const [enableMessage, setEnableMessage] = useState(false)
 
   const fetchUserData = (email: string) => {
     fetch("https://api-6sz9.onrender.com/create", {
@@ -21,9 +23,11 @@ export default function App() {
         };
       })
       .then((data) => {
-        if (data.status == 400) alert("Erro nos dados enviados.");
-        if (data.status == 406) alert("O úsuario já está cadastrado!");
-        if (data.status == 201) alert("Obrigado por se cadastrar na nossa POC.");
+        if (data.status == 400) setShowMessage({message: "Erro nos dados enviados.", code: "data-send-error"});
+        if (data.status == 406) setShowMessage({message: "O úsuario já está cadastrado!", code: "data-send-exist"});
+        if (data.status == 201) setShowMessage({message: "Você está na lista de espera!", code: "data-success"});
+
+        setEnableMessage(true)
       });
   };
 
@@ -322,7 +326,7 @@ export default function App() {
                 Você tem o melhor dos dois mundos, o plano mensal por um preço mais bacana!
               </p>
               <div className="flex justify-center items-baseline my-8">
-                <span className="mr-2 text-5xl font-extrabold">R$9,48</span>
+                <span className="mr-2 text-5xl font-extrabold">R$8,48</span>
                 <span
                   className="text-gray-500 dark:text-gray-400"
                   dark:text-gray-400
@@ -424,7 +428,7 @@ export default function App() {
                 vários amigos.
               </p>
               <div className="flex justify-center items-baseline my-8">
-                <span className="mr-2 text-5xl font-extrabold">R$19,48</span>
+                <span className="mr-2 text-5xl font-extrabold">R$15,48</span>
                 <span className="text-gray-500 dark:text-gray-400">/mês</span>
               </div>
               <ul role="list" className="mb-8 space-y-4 text-left">
@@ -546,7 +550,7 @@ export default function App() {
             </p>
 
             <form
-              className="md:flex flex-row"
+              className="md:flex flex-row mb-3"
               onSubmit={(e) => {
                 handleSubmit(e);
               }}
@@ -567,6 +571,10 @@ export default function App() {
                 Garantir!
               </button>
             </form>
+            {(enableMessage && showMessage.code == 'data-success') && <span className="text-lg text-green-600 select-none">{showMessage.message}</span>}
+            {(enableMessage && showMessage.code == 'data-send-exist') && <span className="text-lg text-red-600 select-none">{showMessage.message}</span>}
+            {(enableMessage && showMessage.code == 'data-send-error') && <span className="text-lg text-red-600 select-none">{showMessage.message}</span>}
+            
           </div>
         </div>
       </section>
